@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.i18n.encoding" value="utf-8" />
+	<constant name="struts.devMode" value="true" />
+	<!--1024000000  约等于1G -->
+	<constant name="struts.multipart.maxSize" value="1024000000" />
+	<!-- 该属性默认是否支持动态方法调用 -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<!-- 修改配置文件不用重启tomcat -->
+	<package name="manage" namespace="/" extends="json-default,struts-default">
+		<interceptors>
+			<interceptor name="rightFilterInterceptor"
+				class="cn.aynu.manage.struts2.interceptor.RightFilterInterceptor" />
+			<interceptor name="catchUrlInterceptor"
+				class="cn.aynu.manage.struts2.interceptor.CatchUrlInterceptor" />
+			<interceptor-stack name="mystack">
+				<!--CatchUrlInterceptor 项目上线后，即可关闭 -->
+				<interceptor-ref name="catchUrlInterceptor" />
+				<interceptor-ref name="rightFilterInterceptor" />
+				<interceptor-ref name="defaultStack">
+					<param name="modelDriven.refreshModelBeforeResult">true</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="mystack" />
+		<global-results>
+			<result name="error_noRight_page">/error/error403.jsp</result>
+			<result name="error">/error/error500.jsp</result>
+		</global-results>
+		<action name="UserAction_*" class="userAction" method="{1}">
+			<result name="success" type="json">
+				<param name="root">msg</param>
+			</result>
+			<result name="toIndexPage">/index.jsp</result>
+			<result name="toHomePage">/WEB-INF/home.jsp</result>
+			<result name="toUserListPage">/WEB-INF/user/userList.jsp</result>
+			<result name="toRoleListPage">/WEB-INF/user/roleList.jsp</result>
+			<result name="toAddUserPage">/WEB-INF/user/addUser.jsp</result>
+			<result name="toAddRolePage">/WEB-INF/user/addRole.jsp</result>
+			<result name="toRightListPage">/WEB-INF/user/rightList.jsp</result>
+			<result name="del" type="chain">UserAction_userList</result>
+			<result name="delRole" type="chain">UserAction_roleList</result>
+			<result name="toUpdatePage">/WEB-INF/user/editUser.jsp</result>
+			<result name="addSuccess">/WEB-INF/user/updateSuccess.jsp</result>
+			<result name="toUpdateRolePage">/WEB-INF/user/editRole.jsp</result>
+			<result name="toUpdateRightPage">/WEB-INF/user/editRight.jsp</result>
+			<result name="toUpdateSuccessPage">/WEB-INF/user/updateSuccess.jsp</result>
+			<result name="updateAuthorize-success">/WEB-INF/user/updateSuccess.jsp</result>
+			<result name="per_list">/WEB-INF/user/userList.jsp</result>
+			<result name="toAuthorizePage">/WEB-INF/user/userAuthorize.jsp</result>
+			<result name="toRoleAuthorizePage">/WEB-INF/user/roleAuthorize.jsp</result>
+			<result name="role_list">/WEB-INF/user/roleList.jsp</result>
+			<result name="right_list">/WEB-INF/user/rightList.jsp</result>
+			<result name="batchDel-success" type="redirectAction">
+				<param name="nameSpace">/</param>
+				<param name="actionName">UserAction_userList</param>
+				<param name="offset">${offset}</param>
+			</result>
+			<result name="batchDelRole-success" type="redirectAction">
+				<param name="nameSpace">/</param>
+				<param name="actionName">UserAction_roleList</param>
+				<param name="offset">${offset}</param>
+			</result>
+		</action>
+		<action name="PersonAction_*" class="personAction" method="{1}">
+			<result name="per_list">/WEB-INF/person/person_list.jsp</result>
+			<result name="addperson">/WEB-INF/person/index.jsp</result>
+			<result name="update-success">/WEB-INF/person/updateSuccess.jsp</result>
+			<result name="add-success">/WEB-INF/person/updateSuccess.jsp</result>
+			<result name="toAddPersonPage">/WEB-INF/person/addPerson.jsp</result>
+			<result name="batchDel-success" type="redirectAction">
+				<param name="nameSpace">/</param>
+				<param name="actionName">PersonAction_pagelist</param>
+				<param name="offset">${offset}</param>
+			</result>
+			<result name="toUpdatePage">/WEB-INF/person/editPerson.jsp</result>
+			<result name="del" type="chain">PersonAction_pagelist</result>
+		</action>
+		
+		<action name="FileAction_*" class="fileAction" method="{1}">
+			<result name="toUploadPage">/upload/uploadFile.jsp</result>
+			<result name="upload-success" type="json"></result>
+			<result name="upload-error" type="json"></result>
+			<result name="deleteExistingFile" type="json">
+				<param name="root">jsonMap</param>
+			</result>
+			<result name="import-success" type="json">
+				<param name="root/result">jsonMap</param>
+			</result>
+			<result name="download" type="stream">
+				<param name="bufferSize">2048</param>
+				<param name="contentType">application/octet-stream;charset=ISO-8859-1</param>
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+				<param name="inputName">inputStream</param>
+			</result>
+			<result name="toDataUploadPage">/upload/importData.jsp?attachmentType=${attachmentType}</result>
+			<result name="export-success" type="stream">
+				<param name="bufferSize">2048</param>
+				<param name="contentType">application/octet-stream;charset=ISO-8859-1</param>
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<action name="CaseinfoAction_*" class="caseinfoAction" method="{1}">
+			<result name="case_list">/WEB-INF/Caseinfo/caseinfo_list.jsp</result>
+			<result name="toAddCaseinfoPage">/WEB-INF/person/addCaseinfo.jsp</result>
+			<result name="del" type="chain">CaseinfoAction_pagelist</result>
+			<result name="toAddCaseinfoPage">/WEB-INF/Caseinfo/addCaseinfo.jsp</result>
+			<result name="toUpdatePage">/WEB-INF/Caseinfo/editCaseinfo.jsp</result>
+			<result name="updatecaseinfo">/WEB-INF/Caseinfo/caseinfoSuccess.jsp
+			</result>
+			<result name="addcaseinfo">/WEB-INF/Caseinfo/caseinfoSuccess.jsp
+			</result>
+			<result name="ajax-success" type="json">
+				<param name="root">delFlag</param>
+			</result>
+			<result name="listen-success" type="json">
+				<param name="root">jsonMap</param>
+			</result>
+			<result name="analysis-success" type="json">
+				<param name="root">jsonMap</param>
+			</result>
+			<result name="toRiskAnalysisPage">/WEB-INF/map/analysis/riskAnalysis.jsp</result>
+			<result name="toUploadPage">/WEB-INF/Caseinfo/uploadFile.jsp</result>
+			<result name="returnSpreadData" type="json">
+				<param name="root">spreadData</param>
+			</result>
+			<result name="toRiskMessPage">/WEB-INF/map/analysis/riskMess.jsp</result>
+			<result name="blur">/WEB-INF/Caseinfo/caseinfo_list.jsp</result>
+			<result name="bdel" type="redirectAction">
+				<param name="actionName">CaseinfoAction_pagelist</param>
+				<param name="nameSpace">/</param>
+				<param name="offset">${offset}</param>
+			</result>
+			<result name="returnAllHeatMapSites" type="json">
+				<param name="root">cases</param>
+			</result>
+			<result name="caseInfoCountPage">/WEB-INF/map/analysis/caseTypeSpread.jsp</result>
+			<result name="upload-success" type="json">
+			</result>
+			<result name="deleteExistingFile" type="json">
+				<param name="root">jsonMap</param>
+			</result>
+			<result name="download" type="stream">
+				<param name="bufferSize">2048</param>
+				<param name="contentType">application/octet-stream;charset=ISO-8859-1</param>
+				<param name="contentDisposition">attachment;filename="${downloadFileName}"</param>
+				<param name="inputName">inputStream</param>
+			</result>
+			<result name="toMessMapPage" type="json"></result>
+		</action>
+
+
+
+		<action name="CarAction_*" class="carAction" method="{1}">
+			<result name="car-list">/WEB-INF/car/car_list.jsp</result>
+			<result name="toAddCarPage">/WEB-INF/car/addCar.jsp</result>
+			<result name="del-success" type="chain">CarAction_blurSearch</result>
+			<result name="toUpdatePage">/WEB-INF/car/editCar.jsp</result>
+			<result name="update-success">/WEB-INF/car/updateSuccess.jsp</result>
+			<result name="add-success">/WEB-INF/car/updateSuccess.jsp</result>
+		</action>
+
+
+		<action name="ShopAction_*" class="shopAction" method="{1}">
+			<result name="toShopListPage">/WEB-INF/shop/shopList.jsp</result>
+			<result name="toAddShopPage">/WEB-INF/shop/addShop.jsp</result>
+			<result name="per_list">/WEB-INF/shop/shopList.jsp</result>
+			<result name="toUpdatePage">/WEB-INF/shop/editShop.jsp</result>
+			<result name="toUpdateSuccessPage">/WEB-INF/shop/updateSuccess.jsp</result>
+			<result name="del" type="redirectAction">ShopAction_shopList</result>
+			<result name="addSuccess">/WEB-INF/shop/updateSuccess.jsp</result>
+			<result name="batchDel-success" type="redirectAction">
+				<param name="nameSpace">/</param>
+				<param name="actionName">ShopAction_shopList</param>
+				<param name="offset">${offset}</param>
+			</result>
+		</action>
+
+		<action name="MapAction_*" class="mapAction" method="{1}">
+			<result name="to3DMapPage">/WEB-INF/map/map-3d.jsp</result>
+			<result name="toMessMapPage">/WEB-INF/map/map-mess.jsp</result>
+			<result name="toAnalyCaseSpread3DPage">/WEB-INF/map/analysis/caseSrpead3D.jsp</result>
+			<result name="toCaseOutCarTimePage" type="json">
+				<param name="root">caseTimeData</param>
+			</result>
+			<result name="toAccidentTimeAnalysPage">/WEB-INF/map/analysis/accidentTimeAnalys.jsp
+			</result>
+			<result name="retrunTimeTimesMap" type="json">
+				<param name="root">timeTimesList</param>
+			</result>
+			<result name="toPicTimeDataPage">/WEB-INF/map/analysis/caseOutCarTime.jsp</result>
+		</action>
+		
+		<action name="LogAction_*" class="logAction" method="{1}">
+			<result name="log-list">/WEB-INF/log/log_list.jsp</result>
+			<result name="del-success" type="chain">LogAction_blurSearch</result>
+		</action>
+	</package>
+</struts>

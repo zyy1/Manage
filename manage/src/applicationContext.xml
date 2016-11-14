@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+	<context:component-scan base-package="cn.aynu" />
+	<context:property-placeholder location="classpath:db.properties" />
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+
+		<property name="initialPoolSize" value="${jdbc.initialPoolSize}"></property>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+		<!-- mysql超过八小时 自动断开连接解决方案 -->
+		<property name="maxIdleTime" value="${cpool.maxIdleTime}"></property>
+	</bean>
+
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQL5InnoDBDialect
+				</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<!-- <prop key="hibernate.cache.use_second_level_cache">true</prop> <prop 
+					key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider 
+					</prop> <prop key="hibernate.cache.use_query_cache">true</prop> -->
+				<prop key="current_session_context_class">thread</prop>
+				<!-- <prop key="hibernate.search.default.directory_provider"> org.hibernate.search.store.FSDirectoryProvider 
+					</prop> -->
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>cn/aynu/manage/vo/User.hbm.xml</value>
+				<value>cn/aynu/manage/vo/Person.hbm.xml</value>
+				<value>cn/aynu/manage/vo/Caseinfo.hbm.xml</value>
+				<value>cn/aynu/manage/vo/Shop.hbm.xml</value>
+				<value>cn/aynu/manage/vo/Callpolice.hbm.xml</value>
+				<value>cn/aynu/manage/vo/UploadFile.hbm.xml</value>
+				<value>cn/aynu/manage/vo/Log.hbm.xml</value>
+				<value>cn/aynu/manage/vo/Car.hbm.xml</value>
+				<value>cn/aynu/manage/vo/safe/Role.hbm.xml</value>
+				<value>cn/aynu/manage/vo/safe/Right.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- 定义事务通知 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<!-- 定义方法的过滤规则 -->
+		<tx:attributes>
+			<!-- 所有方法都使用事务 -->
+			<tx:method name="*" propagation="REQUIRED" />
+			<!-- 定义所有get开头的方法都是只读的 -->
+			<tx:method name="get*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 定义AOP配置 -->
+	<aop:config>
+		<!-- 定义一个切入点 -->
+		<aop:pointcut expression="execution (* cn.aynu.manage.service.*.*(..))"
+			id="services" />
+		<!-- 对切入点和事务的通知，进行适配 -->
+		<aop:advisor advice-ref="txAdvice"  pointcut-ref="services" />
+	</aop:config>
+	<!-- vo -->
+	<bean id="user" class="cn.aynu.manage.vo.User"></bean>
+	<bean id="person" class="cn.aynu.manage.vo.Person"></bean>
+
+	<!-- service -->
+	<bean id="personService" class="cn.aynu.manage.service.imp.PersonServiceImp">
+		<property name="personDao" ref="personDao"></property>
+	</bean>
+	<!-- dao -->
+	<bean id="personDao" class="cn.aynu.manage.dao.imp.PersonDaoImp">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	
+	<bean id="logger" class="cn.aynu.manage.advice.Logger" />
+	
+	<!-- aop配置 -->
+	<aop:config>
+	<!-- 事务切入点通知 -->
+	<aop:advisor advice-ref="txAdvice" pointcut="execution (* cn.aynu.manage.service.*.*(..))"/>
+	<!-- 切面 -->
+	<aop:aspect ref="logger" id="loggerAspect">
+		<aop:around method="record" pointcut="(execution (* cn.aynu.manage.service.*.save*(..))
+												or execution(* *..*Service.update*(..))
+												or execution(* *..*Service.add*(..))
+												or execution(* *..*Service.delete*(..))
+												or execution(* *..*Service.execute*(..))
+												or execution(* *..*Service.batch*(..))
+												or execution(* *..*Service.del*(..))
+												or execution(* *..*Service.upload*(..))
+											)
+											and (!bean(logService))
+											"/>
+	</aop:aspect>
+	</aop:config>
+	<!-- 配置事务完 -->
+</beans>

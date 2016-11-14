@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-12-12 14:37:47 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="cn.aynu.manage.vo.Log"  table="log">
+	    <id name="id" column="id" type="string">
+	    	<generator class="uuid"></generator>
+	    </id>
+        <property name="operParams" type="text" >
+            <column name="OPERPARAMS" />
+        </property>
+        <property name="operResult" type="java.lang.String">
+            <column name="OPERRESULT" />
+        </property>
+        <property name="operName" type="java.lang.String">
+            <column name="OPERNAME" />
+        </property>
+        <property name="operator" type="java.lang.String">
+            <column name="OPERATOR" />
+        </property>
+        <property name="resultMsg" type="java.lang.String">
+            <column name="RESULTMSG" />
+        </property>
+        <property name="operTime" type="java.util.Date">
+            <column name="OPERTIME" />
+        </property>
+    </class>
+</hibernate-mapping>

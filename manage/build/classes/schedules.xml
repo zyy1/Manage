@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!-- 任务明细bean -->
+	<bean id="jobDetailBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<!-- 任务bean -->
+		<property name="jobClass" value="cn.aynu.manage.scheduler.CreateLogTablesTask"></property>
+		<!-- logServcie 注入 -->
+		<property name="jobDataMap">
+			<map>
+				<entry key="logService" value-ref="logService"/>
+			</map>
+		</property>
+	</bean>
+	<!-- 触发器bean -->
+	<bean id="cronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="jobDetailBean"></property>
+		<property name="cronExpression">
+			<!-- 0秒 0分 0时 15号 *月 星期？ （?代表不指定 ）-->
+			<value>0 0 0 15 * ?</value>
+		</property>
+	</bean>
+	
+	<!-- 调度触发器 -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTriggerBean"/>
+			</list>
+		</property>
+	</bean>
+</beans>

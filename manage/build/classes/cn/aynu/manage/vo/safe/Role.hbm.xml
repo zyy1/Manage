@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-12-4 15:00:34 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="cn.aynu.manage.vo.safe.Role" table="role">
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+        <property name="roleName" type="java.lang.String">
+            <column name="ROLENAME" />
+        </property>
+        <property name="roleValue" type="java.lang.String">
+            <column name="ROLEVALUE" />
+        </property>
+        <property name="roleDesc" type="java.lang.String">
+            <column name="ROLEDESC" />
+        </property>
+        <set name="rights" table="role_right_link" lazy="false">
+            <key>
+                <column name="roleid" />
+            </key>
+            <many-to-many class="cn.aynu.manage.vo.safe.Right" column="rightid" />
+        </set>
+    </class>
+</hibernate-mapping>

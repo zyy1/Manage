@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-5-18 18:47:57 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+	<class name="cn.aynu.manage.vo.UploadFile" table="uploadfiles">
+		<id name="id" type="java.lang.Integer">
+			<column name="ID" />
+			<generator class="native" />
+		</id>
+		<property name="extName" type="java.lang.String">
+			<column name="extName"></column>
+		</property>
+		<property name="url" type="java.lang.String">
+			<column name="URL" />
+		</property>
+		<property name="fileName" type="java.lang.String">
+			<column name="FILENAME" />
+		</property>
+		<property name="uploadTime" type="java.util.Date">
+			<column name="uploadTime" />
+		</property>
+		<property name="attachmentType" type="java.lang.String">
+			<column name="attachmentType" length="50"/>
+		</property>
+		<property name="ownerId" type="java.lang.Integer">
+			<column name="ownerId" length="11"/>
+		</property>
+	</class>
+</hibernate-mapping>

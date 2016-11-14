@@ -1,0 +1,60 @@
+@CHARSET "UTF-8";
+body{
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.error_ex{
+	text-align: center;
+}
+.error_ex h1 {
+    font-size: 140px;
+    font-weight: bolder !important;
+    font-family:"微软雅黑";
+    padding: 50px 0;
+    line-height:40px;
+    color: #044599;
+}
+.widget-box {
+    background: none repeat scroll 0 0 #F9F9F9;
+    border-left: 1px solid #CDCDCD;
+    border-top: 1px solid #CDCDCD;
+    border-right: 1px solid #CDCDCD;
+    clear: both;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    position: relative;
+}
+.widget-title, .modal-header, .table th, div.dataTables_wrapper .ui-widget-header {
+    background: #efefef;
+    border-bottom: 1px solid #CDCDCD;
+    height: 36px;
+}
+.widget-title span.icon {
+    padding: 9px 10px 7px 11px;
+    float: left;
+    border-right: 1px solid #dadada;
+}
+#content-header h1 {
+    color: #555555;
+    font-size: 28px;
+    font-weight: normal;
+    float: none;
+    text-shadow: 0 1px 0 #ffffff;
+    margin-left: 20px;
+    position: relative;
+}
+[class^="icon-"], [class*=" icon-"] {
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    display: inline;
+    width: auto;
+    height: auto;
+    line-height: normal;
+    vertical-align: baseline;
+    background-image: none !important;
+    background-position: 0% 0%;
+    background-repeat: repeat;
+}
+.widget-title h5{
+	line-height: 36px;
+}

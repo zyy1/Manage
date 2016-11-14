@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-12-4 15:00:34 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+	<class name="cn.aynu.manage.vo.safe.Right" table="rights">
+		<id name="id" column="id" type="integer">
+			<generator class="identity" />
+		</id>
+		<property name="rightUrl" column="righturl" type="string" length="50" />
+		<property name="rightName" column="rightname" type="string" length="200" />
+		<property name="rightDesc" column="rightdesc" type="string" length="200" />
+		<property name="rightPos" column="rightpos" type="integer" update="false"/>
+		<property name="rightCode" column="rightcode" type="long" update="false" />
+		<property name="common" column="common" type="boolean" />
+	</class>
+</hibernate-mapping>
